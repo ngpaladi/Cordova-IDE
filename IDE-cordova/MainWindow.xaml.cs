@@ -126,13 +126,18 @@ namespace IDE_cordova
             file.Filter = "cdp files (*.cdp)|*.cdp|All files (*.*)|*.*";
             file.FilterIndex = 2;
             file.RestoreDirectory = true;
-            file.ShowDialog();
-             on file.OK
-            {
+
+            DialogResult result = file.ShowDialog();
+            
                 path = file.FileName;
                 string[] readText = File.ReadAllLines(path, Encoding.UTF8);
                 CurrentProject.loadProject(readText[0], readText[1], readText[2], readText[3], path);
-            }
+            FileStream fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
+            TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
+            prevSave = true;
+            CurrentSession.setSessionPath(CurrentProject.getBuildPath() + "\\www\\");
+
         }
 
         private void NewProject_Click(object sender, RoutedEventArgs e)
@@ -158,6 +163,10 @@ namespace IDE_cordova
             string[] cdpText = { CurrentProject.getName(), CurrentProject.getPath(), CurrentProject.getCreateTimeStr(), CurrentProject.getBuildTimeStr()  };
             System.Threading.Thread.Sleep(5000);
             File.WriteAllLines(CurrentProject.getCdpPath(), cdpText, Encoding.UTF8);
+            FileStream fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
+            TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
+            prevSave = true;
 
 
         }
@@ -165,8 +174,9 @@ namespace IDE_cordova
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "HTML (*.html)|*.html|CSS(*.css) | *.css |Javascript(*.js) | *.js | All files (*.*)|*.*";
-            dlg.ShowDialog();
-                FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
+            dlg.InitialDirectory = CurrentSession.getSessionPath();
+            DialogResult result = dlg.ShowDialog();
+            FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
                 TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
                 range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
             prevSave = true;
@@ -177,8 +187,9 @@ namespace IDE_cordova
         {
             if (!prevSave) { 
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Filter = "Rich Text Format (*.rtf)|*.rtf|All files (*.*)|*.*";
-            
+            dlg.Filter = "HTML (*.html)|*.html|CSS(*.css) | *.css |Javascript(*.js) | *.js | All files (*.*)|*.*";
+                dlg.InitialDirectory = CurrentSession.getSessionPath();
+                DialogResult result = dlg.ShowDialog();
                 fileStream = new FileStream(dlg.FileName, FileMode.Create);
                 TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
                 range.Save(fileStream, System.Windows.Forms.DataFormats.Text);
