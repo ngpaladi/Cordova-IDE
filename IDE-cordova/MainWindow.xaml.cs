@@ -43,13 +43,15 @@ namespace IDE_cordova
             updateCordova.Click += UpdateCordova_Click;
             openFile.Click += Open_Executed;
             Editor.TextChanged += Editor_TextChanged;
-             
+            Editor.AcceptsTab = true;
+            Editor.AcceptsReturn = true;
             prevSave = false;
         }
 
         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+            Editor.t
+
             
         }
 
@@ -200,6 +202,26 @@ namespace IDE_cordova
                 range.Save(fileStream, System.Windows.Forms.DataFormats.Text);
             }
 
+        }
+        public static void syntaxHighlight(string start, string end, Color color, System.Windows.Forms.RichTextBox richTextBox, int startIndex)
+        {
+            if (startIndex < 0 || startIndex > 5) startIndex = 0;
+
+            System.Drawing.Font newFont = new Font("", 10f, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 178, false);
+            try
+            {
+                foreach (string line in richTextBox.Lines)
+                {
+                    if (line.Contains(textToMark))
+                    {
+                        richTextBox.Select(startIndex, line.Length);
+                        richTextBox.SelectionBackColor = color;
+                    }
+                    startIndex += line.Length + 1;
+                }
+            }
+            catch
+            { }
         }
         /* private void Image_Click(object sender, RoutedEventArgs e)
          {
