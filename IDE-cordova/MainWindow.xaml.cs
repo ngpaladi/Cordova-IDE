@@ -53,11 +53,9 @@ namespace IDE_cordova
 
         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(200, 200, 255);
-
-            syntaxHighlight(color, Editor, 0);
-
-
+            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            textRange.ClearAllProperties();
+            syntaxHighlight(Editor);
         }
 
         public void submitCMD(string pgm, string args, string dir,  bool show)
@@ -208,17 +206,29 @@ namespace IDE_cordova
             }
 
         }
-        public static void syntaxHighlight(System.Drawing.Color color, System.Windows.Controls.RichTextBox richTextBox, int startIndex)
+        public void syntaxHighlight(System.Windows.Controls.RichTextBox rtb)
         {
-            if (startIndex < 0 || startIndex > 5) startIndex = 0;
+            TextPointer tp = rtb.Document.ContentStart;
+            tp = FindNextInst(tp, '<');
+            TextPointer tp2 = tp;
+            tp2 = FindNextInst(tp, '>');
+            TextPointer textRangeEnd = tp.GetPositionAtOffset(1, LogicalDirection.Forward);
 
-            System.Drawing.Font newFont = new Font("", 10f, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 178, false);
-            try
+            TextRange tokenTextRange = new TextRange(tp, tp2);
+
+            tokenTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Drawing.Brushes.Blue);
+        }
+        public TextPointer FindNextInst(TextPointer t, char c)
+        {
+            char[] test = new char[1];
+            test[0] = c;
+            char[] buffer = new char[1];
+            do
             {
-                
-            }
-            catch
-            { }
+                t.GetTextInRun(LogicalDirection.Forward, buffer, 0, 1);
+                t.GetNextContextPosition(LogicalDirection.Forward);
+            } while (buffer[0] != c);
+            return t;
         }
         /* private void Image_Click(object sender, RoutedEventArgs e)
          {
