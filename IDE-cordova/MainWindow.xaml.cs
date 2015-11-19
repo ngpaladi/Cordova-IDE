@@ -53,8 +53,11 @@ namespace IDE_cordova
 
         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
+
             TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
             textRange.ClearAllProperties();
+            
+            
             syntaxHighlight(Editor);
         }
 
@@ -208,26 +211,42 @@ namespace IDE_cordova
         }
         public void syntaxHighlight(System.Windows.Controls.RichTextBox rtb)
         {
-            TextPointer tp = rtb.Document.ContentStart;
-            tp = FindNextInst(tp, '<');
-            TextPointer tp2 = tp;
-            tp2 = FindNextInst(tp, '>');
-            TextPointer textRangeEnd = tp.GetPositionAtOffset(1, LogicalDirection.Forward);
+            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
+            Match m = Regex.Match(textRange.Text, "<");
+            Match n = Regex.Match(textRange.Text, ">");
 
-            TextRange tokenTextRange = new TextRange(tp, tp2);
-
-            tokenTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Drawing.Brushes.Blue);
+            do
+            {
+                m = m.NextMatch();
+                TextPointer t = Editor.Document.ContentStart;
+                t.GetPositionAtOffset(m.Index, LogicalDirection.Forward);
+                n = n.NextMatch();
+                TextPointer t2 = Editor.Document.ContentStart;
+                t2.GetPositionAtOffset(n.Index, LogicalDirection.Forward);
+                if (n.Success)
+                {
+                    t2 = t2.GetPositionAtOffset(n.Index, LogicalDirection.Forward);
+                }
+                else
+                {
+                    t2 = Editor.Document.ContentEnd;
+                }
+                TextRange tokenTextRange = new TextRange(t, t2);
+                tokenTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Drawing.Brushes.Blue);
+            }
+            while (m.Success);
         }
         public TextPointer FindNextInst(TextPointer t, char c)
         {
-            char[] test = new char[1];
-            test[0] = c;
-            char[] buffer = new char[1];
+            
+            char test = ' ';
+            string t1;
             do
             {
-                t.GetTextInRun(LogicalDirection.Forward, buffer, 0, 1);
-                t.GetNextContextPosition(LogicalDirection.Forward);
-            } while (buffer[0] != c);
+                t1 = t.GetTextInRun(LogicalDirection.Forward);
+                
+                t = t.GetPositionAtOffset(1, LogicalDirection.Forward);
+            } while (test != c);
             return t;
         }
         /* private void Image_Click(object sender, RoutedEventArgs e)
