@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -16,6 +17,8 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
+using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace IDE_cordova
 {
@@ -50,9 +53,11 @@ namespace IDE_cordova
 
         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Editor.t
+            System.Drawing.Color color = System.Drawing.Color.FromArgb(200, 200, 255);
 
-            
+            syntaxHighlight(color, Editor, 0);
+
+
         }
 
         public void submitCMD(string pgm, string args, string dir,  bool show)
@@ -203,22 +208,14 @@ namespace IDE_cordova
             }
 
         }
-        public static void syntaxHighlight(string start, string end, Color color, System.Windows.Forms.RichTextBox richTextBox, int startIndex)
+        public static void syntaxHighlight(System.Drawing.Color color, System.Windows.Controls.RichTextBox richTextBox, int startIndex)
         {
             if (startIndex < 0 || startIndex > 5) startIndex = 0;
 
             System.Drawing.Font newFont = new Font("", 10f, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 178, false);
             try
             {
-                foreach (string line in richTextBox.Lines)
-                {
-                    if (line.Contains(textToMark))
-                    {
-                        richTextBox.Select(startIndex, line.Length);
-                        richTextBox.SelectionBackColor = color;
-                    }
-                    startIndex += line.Length + 1;
-                }
+                
             }
             catch
             { }
