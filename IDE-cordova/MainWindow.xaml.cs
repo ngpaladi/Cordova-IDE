@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -33,6 +32,7 @@ namespace IDE_cordova
         public Session CurrentSession;
         private bool prevSave;
         FileStream fileStream;
+        private bool justOpen;
 
         public MainWindow()
         {
@@ -45,21 +45,48 @@ namespace IDE_cordova
             buildAndroid.Click += BuildAndroid_Click;
             updateCordova.Click += UpdateCordova_Click;
             openFile.Click += Open_Executed;
+            saveFile.Click += Save_Executed;
             Editor.TextChanged += Editor_TextChanged;
             Editor.AcceptsTab = true;
             Editor.AcceptsReturn = true;
             prevSave = false;
+            justOpen = false;
         }
 
         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-
-            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
-            textRange.ClearAllProperties();
-            
-            
-            syntaxHighlight(Editor);
+            //txtUpdate();
         }
+        /*private void txtUpdate() {
+            if (justOpen)
+            {
+                return;
+            }
+            else
+            {
+                
+                Editor.Foreground = System.Windows.Media.Brushes.White;
+                Match m = Regex.Match(doc.ToString(), "</html>");
+                m.NextMatch();
+                if (m.Success)
+                    try
+                    {
+                        foreach (string line in Editor.Lines())
+                        {
+                            if (line.Contains("<") && line.Contains(">"))
+                            {
+                                Editor.Select();
+                                Editor.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Yellow);
+                            }
+                            startIndex += line.Length + 1;
+                        }
+                    }
+                    catch
+                    { }
+                else
+                    return;
+            }
+        }*/
 
         public void submitCMD(string pgm, string args, string dir,  bool show)
         {
@@ -140,11 +167,14 @@ namespace IDE_cordova
                 path = file.FileName;
                 string[] readText = File.ReadAllLines(path, Encoding.UTF8);
                 CurrentProject.loadProject(readText[0], readText[1], readText[2], readText[3], path);
-            FileStream fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
+            justOpen = true;
+            fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
             TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
             range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
             prevSave = true;
             CurrentSession.setSessionPath(CurrentProject.getBuildPath() + "\\www\\");
+            justOpen = false;
+            //txtUpdate();
 
         }
 
@@ -170,11 +200,14 @@ namespace IDE_cordova
             System.Threading.Thread.Sleep(5000);
             string[] cdpText = { CurrentProject.getName(), CurrentProject.getPath(), CurrentProject.getCreateTimeStr(), CurrentProject.getBuildTimeStr()  };
             System.Threading.Thread.Sleep(5000);
+            justOpen = true;
             File.WriteAllLines(CurrentProject.getCdpPath(), cdpText, Encoding.UTF8);
-            FileStream fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
+             fileStream = new FileStream(CurrentProject.getBuildPath() + "\\www\\index.html", FileMode.Open);
             TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
             range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
             prevSave = true;
+            justOpen = false;
+            //txtUpdate();
 
 
         }
@@ -184,10 +217,13 @@ namespace IDE_cordova
             dlg.Filter = "HTML (*.html)|*.html|CSS(*.css) | *.css |Javascript(*.js) | *.js | All files (*.*)|*.*";
             dlg.InitialDirectory = CurrentSession.getSessionPath();
             DialogResult result = dlg.ShowDialog();
-            FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
+            justOpen = true;
+             fileStream = new FileStream(dlg.FileName, FileMode.Open);
                 TextRange range = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
                 range.Load(fileStream, System.Windows.Forms.DataFormats.Text);
             prevSave = true;
+            justOpen = false;
+            //txtUpdate();
             
         }
 
@@ -209,19 +245,17 @@ namespace IDE_cordova
             }
 
         }
-        public void syntaxHighlight(System.Windows.Controls.RichTextBox rtb)
+       /* public void syntaxHighlight()
         {
-            TextRange textRange = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd);
-            Match m = Regex.Match(textRange.Text, "<");
-            Match n = Regex.Match(textRange.Text, ">");
+            Match m = Regex.Match(doc.ToString(), "<");
+            Match n = Regex.Match(doc.ToString(), ">");
 
-            do
+            while (n.Success)
             {
-                m = m.NextMatch();
-                TextPointer t = Editor.Document.ContentStart;
+                TextPointer t = doc.ContentStart;
                 t.GetPositionAtOffset(m.Index, LogicalDirection.Forward);
                 n = n.NextMatch();
-                TextPointer t2 = Editor.Document.ContentStart;
+                TextPointer t2 = doc.ContentStart;
                 t2.GetPositionAtOffset(n.Index, LogicalDirection.Forward);
                 if (n.Success)
                 {
@@ -231,24 +265,13 @@ namespace IDE_cordova
                 {
                     t2 = Editor.Document.ContentEnd;
                 }
+                doc.
                 TextRange tokenTextRange = new TextRange(t, t2);
-                tokenTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Drawing.Brushes.Blue);
+                tokenTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Yellow);
             }
-            while (m.Success);
-        }
-        public TextPointer FindNextInst(TextPointer t, char c)
-        {
             
-            char test = ' ';
-            string t1;
-            do
-            {
-                t1 = t.GetTextInRun(LogicalDirection.Forward);
-                
-                t = t.GetPositionAtOffset(1, LogicalDirection.Forward);
-            } while (test != c);
-            return t;
-        }
+        }*/
+ 
         /* private void Image_Click(object sender, RoutedEventArgs e)
          {
              //throw new NotImplementedException();

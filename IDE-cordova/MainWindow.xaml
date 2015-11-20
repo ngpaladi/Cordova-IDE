@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IDE_cordova"
         mc:Ignorable="d"
-        Title="CordovaIDE" Height="600" Width="700" Icon="cordova_bot.ico">
+        Title="CordovaIDE" Height="600" Width="1000" Icon="cordova_bot.ico">
     <Window.Resources>
         <Style x:Key="GridStyle1" TargetType="{x:Type Grid}"/>
     </Window.Resources>
     <Grid Background="Black">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.2*"></ColumnDefinition>
-            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            <ColumnDefinition Width="0.7*"></ColumnDefinition>
             <ColumnDefinition Width="0.2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -29,8 +29,9 @@
         <Button x:Name="updateCordova" Content=" Update &#x000D;Cordova" FontSize="25" Background="#1F1F1F" Grid.Column="0" Grid.Row="4"  Foreground="white" ></Button>
         <DockPanel Grid.Column="1" Grid.ColumnSpan="2"/>
         <!--<WebBrowser Grid.Column="2" Margin="10,47,10,62" Grid.Row="1" Grid.RowSpan="3"   />-->
-        <RichTextBox Grid.RowSpan="5" ScrollViewer.CanContentScroll="true" BorderThickness="0" AcceptsReturn="true" FontSize="15" x:Name="Editor" Background="#1F1F1F" Foreground="White" Block.LineHeight="8" Margin="0,68,10,0"  VerticalAlignment="Top"    Grid.Column="1" Grid.ColumnSpan="2"    />
-        <ToolBar Background="Black" Foreground="Black" Grid.ColumnSpan="2" Grid.Column="1" Margin="10,0,0,62" >
+        <RichTextBox  ScrollViewer.CanContentScroll="true" BorderThickness="0" AcceptsReturn="true" FontSize="15" x:Name="Editor" Background="#1F1F1F" Foreground="White" Block.LineHeight="8" Margin="10,49,10,0"  VerticalAlignment="Top"    Grid.Column="1" Grid.ColumnSpan="2" Height="510" Grid.RowSpan="5"    />
+
+        <ToolBar Background="Black" Foreground="Black" Grid.ColumnSpan="2" Grid.Column="1" Margin="10,0,0,62" Height="36" >
             <Button x:Name="openFile">
                 <Image Source="./new.png" Width="26" Height="26" />
             </Button>
@@ -38,7 +39,7 @@
             <Button x:Name="saveFile">
                 <Image Source="./save.png" Width="26" Height="26" />
             </Button>
-            
+
 
         </ToolBar>
 
